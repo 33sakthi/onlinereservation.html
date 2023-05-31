@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Reservation System</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <h1>Reservation Form</h1>
+    <form method="post" action="process_reservation.php">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <!-- Add more input fields for email, phone, date, time, etc. -->
+
+        <input type="submit" value="Submit Reservation">
+    </form>
+</body>
+</html>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: #333;
+}
+
+form {
+    margin-top: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"] {
+    width: 200px;
+    padding: 5px;
+}
+</style>
+
+<?php
+// Start the session
+session_start();
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Validate and sanitize user input
+    $name = $_POST['name'];
+    // Validate and sanitize other input fields
+
+    // Establish database connection
+    $servername = "localhost";
+    $username = "your_username";
+    $password = "your_password";
+    $dbname = "reservation_system";
+
+    $conn = new mysqli($servername, $username, $password, $dbname);
+
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    // Insert reservation details into the database
+    $sql = "INSERT INTO reservations (name, email, phone, date, time) VALUES ('$name', '$email', '$phone', '$date', '$time')";
+
+    if ($conn->query($sql) === TRUE) {
+        // Reservation successfully stored in the database
+        $_SESSION['reservation_id'] = $conn->insert_id;
+        $_SESSION['name'] = $name;
+        // Store other relevant session variables
+
+        // Redirect to a confirmation page
+        header("Location: confirmation.php");
+        exit();
+    } else {
+        // Error occurred while inserting into the database
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+
+    $conn->close();
+}
+?>
+
+confirmation.php:
+
+<?php
+// Start the session
+session_start();
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reservation Confirmation</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <h1>Reservation Confirmation</h1>
+    <p>Thank you, <?php echo $_SESSION['name']; ?>, for your reservation.</p>
+    <!-- Display other reservation details -->
+</body>
+</html>
